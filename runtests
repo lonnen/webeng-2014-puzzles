@@ -1,0 +1,32 @@
+#!/bin/bash
+set -eo pipefail
+
+export SUBMISSION=$1
+export TESTS=$2
+
+[ ! -d $SUBMISSION ] && {
+    echo "Submission directory $SUBMISSION does not exist."
+    exit 1
+}
+
+function exec_tests() {
+    file=`basename $1`
+    [ ! -d $TESTS/$file ] && {
+        echo "skipping $file - no matching test suite"
+        return
+    }
+    echo "testing $file"
+    cd $TESTS/$file
+    start=$(date +%s)
+    #timeout -s 9 10m bats tests.bats
+    bats tests.bats
+    end=$(date +%s)
+    t=$((start-end))
+    echo "elapsed time: $t"
+}
+
+files=$(find $SUBMISSION -maxdepth 1 -type f -executable)
+
+for file in $files; do
+    exec_tests $file
+done
