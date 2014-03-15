@@ -10,6 +10,9 @@ export TESTS=$2
 }
 
 function exec_tests() {
+    [ ! -x $1 ] && {
+        return
+    }
     file=`basename $1`
     [ ! -d $TESTS/$file ] && {
         echo "skipping $file - no matching test suite"
@@ -25,8 +28,6 @@ function exec_tests() {
     echo "elapsed time: $t"
 }
 
-files=$(find $SUBMISSION -maxdepth 1 -type f -executable)
-
-for file in $files; do
+for file in $(find $SUBMISSION -maxdepth 1 -type f); do
     exec_tests $file
 done
