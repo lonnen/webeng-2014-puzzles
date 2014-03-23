@@ -1,39 +1,23 @@
 #!/bin/bash
 set -eo pipefail
 
-export SCOREBOARD="http://requestb.in/17rqghu1"
-export SUBMISSION=$1
-export TESTS=$2
-
-[ ! -d $SUBMISSION ] && {
-    echo "Submission directory $SUBMISSION does not exist."
-    exit 1
-}
+export TESTS="$1"
+export SOLUTIONS="$2"
 
 function exec_tests() {
-    [ ! -x $1 ] && {
+    SOLUTION=`pwd`/$1
+    PUZZLE=$(basename $SOLUTION)
+    TESTFILE=$TESTS/$PUZZLE/tests.sh
+    [ ! -f $TESTFILE ] && {
+        echo "skipping $PUZZLE - no matching test suite"
         return
     }
-    file=`basename $SUBMISSION`
-    [ ! -d $TESTS/$file ] && {
-        echo "skipping $file - no matching test suite"
-        return
-    }
-    echo "testing $file"
-    cd $TESTS/$file
-    start=$(date +%s)
-    #timeout -s 9 10m bats tests.bats
-    bats tests.bats
-    end=$(date +%s)
-    t=$((start-end))
-    echo "elapsed time: $t"
-    curl -s \
-        -H "Content-Type: application/json" \
-        -X POST \
-        -d "{\"test\": \"$file\", \"time\": \"$t\", }" \
-        $SCOREBOARD
+    echo "testing $PUZZLE"
+    cd $TESTS/$PUZZLE
+    ./tests.sh $SOLUTION
+    cd ../..
 }
 
-for file in $(find $SUBMISSION -maxdepth 1 -type f); do
-    exec_tests $file
+for FILE in $(find $SOLUTIONS -maxdepth 1 -type f); do
+    exec_tests $FILE
 done
