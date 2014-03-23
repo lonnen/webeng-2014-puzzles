@@ -1,6 +1,7 @@
 #!/bin/bash
 set -eo pipefail
 
+export SCOREBOARD="http://requestb.in/17rqghu1?inspect"
 export SUBMISSION=$1
 export TESTS=$2
 
@@ -13,7 +14,7 @@ function exec_tests() {
     [ ! -x $1 ] && {
         return
     }
-    file=`basename $1`
+    file=`basename $SUBMISSION`
     [ ! -d $TESTS/$file ] && {
         echo "skipping $file - no matching test suite"
         return
@@ -26,6 +27,11 @@ function exec_tests() {
     end=$(date +%s)
     t=$((start-end))
     echo "elapsed time: $t"
+    curl -s \
+        -H "Content-Type: application/json" \
+        -X POST \
+        -d "{\"test\": \"$file\", \"time\": \"$t\", }" \
+        $SCOREBOARD
 }
 
 for file in $(find $SUBMISSION -maxdepth 1 -type f); do
