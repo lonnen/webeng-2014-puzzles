@@ -1,0 +1,4 @@
+language: bash
+compiler:
+  - ghc
+script: ./runtests reference/ puzzles/
