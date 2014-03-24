@@ -12,10 +12,9 @@ function exec_tests() {
         echo "skipping $PUZZLE - no matching test suite"
         return
     }
-    echo "testing $PUZZLE"
-    cd $TESTS/$PUZZLE
+    pushd $TESTS/$PUZZLE > /dev/null
     ./tests.sh $SOLUTION
-    cd ../..
+    popd  > /dev/null
 }
 
 for FILE in $(find $SOLUTIONS -maxdepth 1 -type f); do
