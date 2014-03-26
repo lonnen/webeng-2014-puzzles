@@ -1,0 +1,59 @@
+#!/usr/bin/ruby
+def gcd(a, b)
+  if a == 0
+    return b
+  else
+    while b != 0
+      if a > b
+        a = a - b
+      else
+        b = b - a
+      end
+    end
+    return a
+  end
+end
+
+input = File.new(ARGV[0], 'r')
+
+weight = input.gets.strip.to_i
+items = []
+while line = input.gets
+  line.strip!
+  unless line.empty?
+    sku, w, c = line.split(/\s+/)
+    items.push [w.to_i, c.to_i]
+  end
+end
+
+# Optimization #1 - prune items that weigh less than a replacement, but cost more
+items.each do |a|
+  items.delete_if do |b|
+    b[0] < a[0] && (b[0].to_f / a[0]) * b[1] > a[1]
+  end
+end
+
+# Optimization #2 - find GCD of all weights, and divide if applicable
+gcd = gcd(items[0][0], weight)
+items.each { |item| gcd = gcd(gcd, item[0]) }
+if gcd > 1
+  weight /= gcd
+  items.each { |item| item[0] /= gcd }
+end
+
+a = Array.new(weight + 1)
+a[0] = 0
+
+for w in 1..weight
+  min = nil
+  items.each do |item|
+    if item[0] > 0
+      d = w - item[0]
+      cost = (d <= 0 ? 0 : a[d]) + item[1]
+      min = cost if min.nil? || cost < min
+    end
+  end
+  a[w] = min
+end
+
+puts a[weight]

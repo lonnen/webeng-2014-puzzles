@@ -5,10 +5,16 @@
 
 SOLUTION=$1
 
-# Are you doing it right?
+# Sparse Genome
 assert "$SOLUTION 1.in" "$(cat 1.out)"
+
+# Dense Genome
+assert "$SOLUTION 2.in" "$(cat 2.out)"
+
+# Degenerate Case
+assert "$SOLUTION 3.in" "$(cat 3.out)"
 
 result=`assert_end $(basename $SOLUTION)`
 
-SCOREBOARD=`basename $1`
+SCOREBOARD=`basename $SOLUTION`
 report_result $result

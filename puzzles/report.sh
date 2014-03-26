@@ -4,7 +4,7 @@ export SCOREBOARD=${SCOREBOARD:="0.0.0.0:8080"}
 export PLAYER=${PLAYER:=outis}
 
 report_result() {
-    echo "reporting to $SCOREBOARD ..."
+    echo "reporting about $SCOREBOARD ..."
     indent "player: $PLAYER"
     indent "result: $@"
 }
