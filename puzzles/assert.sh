@@ -61,19 +61,16 @@ _assert_reset() {
     tests_ran=0
     tests_failed=0
     tests_errors=()
-    tests_starttime="$(date +%s.%N)" # seconds_since_epoch.nanoseconds
+    tests_starttime="$(date +%s)" # seconds_since_epoch.nanoseconds
 }
 
 assert_end() {
     # assert_end [suite ..]
-    tests_endtime="$(date +%s.%N)"
+    tests_endtime="$(date +%s)"
     tests="$tests_ran ${*:+$* }tests"
     [[ -n "$DISCOVERONLY" ]] && echo "collected $tests." && _assert_reset && return
     [[ -n "$DEBUG" ]] && echo
-    [[ -z "$INVARIANT" ]] && report_time=" in $(bc \
-<<< "${tests_endtime%.N} - ${tests_starttime%.N}" \
-| sed -e 's/\.\([0-9]\{0,3\}\)[0-9]*/.\1/' -e 's/^\./0./')s" \
-        || report_time=
+    [[ -z "$INVARIANT" ]] && report_time=" in $(expr $tests_endtime - $tests_starttime)s" || report_time=
 
     if [[ "$tests_failed" -eq 0 ]]; then
 echo "all $tests passed$report_time."
