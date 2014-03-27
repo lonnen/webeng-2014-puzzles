@@ -103,8 +103,8 @@ fi
     [[ -z "$result" ]] && result="nothing" || result="\"$result\""
     [[ -z "$2" ]] && expected="nothing" || expected="\"$2\""
     failure="expected result:${_indent}$result"
-    [[ -n "$TITLE" ]] || export $TITLE=""
-    report="test #$tests_ran \"$TITLE\" failed:${_indent}$failure"
+    [[ -n "$TITLE" ]] || export TITLE=""
+    report="test #$tests_ran \"$TITLE\" failed."
     tests_errors[$tests_failed]="$report"
     (( tests_failed++ ))
     if [[ -n "$STOP" ]]; then

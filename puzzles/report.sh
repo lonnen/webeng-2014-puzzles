@@ -5,7 +5,6 @@ export PLAYER=${PLAYER:=outis}
 
 report_result() {
     echo "reporting about $SCOREBOARD ..."
-    indent "player: $PLAYER"
     indent "result: $@"
 }
 
